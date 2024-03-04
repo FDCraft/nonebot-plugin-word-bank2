@@ -24,6 +24,7 @@ def parse_msg(msg: str) -> str:
     msg = re.sub(r"/at\s*(\d+)", lambda s: f"[CQ:at,qq={s.group(1)}]", msg)
     msg = re.sub(r"/self", "{nickname}", msg)
     msg = re.sub(r"/atself", "{sender_id:at}", msg)
+    msg = re.sub(r'https://multimedia.nt.qq.com.cn', r'https://gchat.qpic.cn', msg)
     return msg
 
 

@@ -1,4 +1,5 @@
 import re
+import sys
 from typing import Dict, Optional
 from pathlib import Path
 
@@ -58,7 +59,7 @@ async def save_and_convert_img(msg: Message, img_dir: Path):
     """
     for msg_seg in msg:
         if msg_seg.type == "image":
-            filename = msg_seg.data.get("file", "")
+            filename = msg_seg.data.get("file", "").split('/')[5]
             if not filename:
                 continue
             # 检查图片文件夹中有无同名文件
@@ -72,7 +73,13 @@ async def save_and_convert_img(msg: Message, img_dir: Path):
                 if not data:
                     continue
                 await save_img(data, filepath)
-            msg_seg.data["file"] = f"file:///{filepath.resolve()}"
+            if sys.platform.startswith('win'):
+                msg_seg.data["file"] = f"file:///{filepath.resolve()}"
+            else:
+                msg_seg.data["file"] = f"file://{filepath.resolve()}"
+            msg_seg.data.pop("url")
+            msg_seg.data.pop("summary")
+            msg_seg.data.pop("subType")
 
 
 def compare_msgseg(msg1: MessageSegment, msg2: MessageSegment) -> bool:
